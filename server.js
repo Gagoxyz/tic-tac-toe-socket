@@ -51,6 +51,14 @@ io.on('connection', (socket) => {
         socket.to(room).emit('opponentMove', { index });
     });
 
+    socket.on('gameOver', ({ result }) => {
+        const rooms = Array.from(socket.rooms).filter((r) => r !== socket.id);
+        if (rooms.length === 0) return;
+
+        const room = rooms[0];
+        socket.to(room).emit('gameEnded', { result });
+    });
+
 })
 
 const PORT = process.env.PORT || 3000

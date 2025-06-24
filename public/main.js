@@ -126,16 +126,33 @@ function checkGameOver() {
 }
 
 function handleGameOver(result) {
-  myTurn = false;
+    myTurn = false;
 
-  if (result === 'draw') {
-    statusDiv.textContent = 'Empate 🤝';
-  } else if (result === mySymbol) {
-    statusDiv.textContent = '¡Has ganado! 🎉';
-  } else {
-    statusDiv.textContent = 'Has perdido 😢';
-  }
+    if (result === 'draw') {
+        statusDiv.textContent = 'Empate 🤝';
+    } else if (result === mySymbol) {
+        statusDiv.textContent = '¡Has ganado! 🎉';
+    } else {
+        statusDiv.textContent = 'Has perdido 😢';
+    }
 
-  // Desactivar todas las celdas
-  cells.forEach(cell => cell.classList.add('disabled'));
+    cells.forEach(cell => cell.classList.add('disabled'));
+
+    // Notifica al servidor el final del juego
+    socket.emit('gameOver', { result });
 }
+
+socket.on('gameEnded', ({ result }) => {
+    myTurn = false;
+
+    if (result === 'draw') {
+        statusDiv.textContent = 'Empate 🤝';
+    } else if (result === opponentSymbol) {
+        statusDiv.textContent = 'Has perdido 😢!';
+    } else {
+        statusDiv.textContent = '¡Has ganado! 🎉!';
+    }
+
+    cells.forEach(cell => cell.classList.add('disabled'));
+});
+
