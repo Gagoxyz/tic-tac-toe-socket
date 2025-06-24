@@ -1,6 +1,7 @@
 body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(to right, #0e6fee, #94e747);
+background: linear-gradient(135deg, #0d1117, #1b2838, #2e3d55);
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,7 +34,7 @@ body {
     padding: 0.5rem 1rem;
     font-size: 1rem;
     background-color: #ffffff;
-    color: #4a00e0;
+    color: #0d1117;
     border: none;
     border-radius: 0.8rem;
     font-weight: bold;
@@ -85,7 +86,7 @@ body {
 .cell.disabled {
     pointer-events: none;
     background-color: #ccc;
-    color: #777;
+    color: #1b2838;
 }
 
 .hidden {
