@@ -1,65 +1,79 @@
-const express = require('express')
-const http = require('http')
-const { Server } = require('socket.io')
-const path = require('path')
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
 
-const app = express()
-const server = http.createServer(app)
-const io = new Server(server)
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')));
 
-let waitingPlayer = null
+let waitingPlayer = null;
+const rooms = {};
 
 io.on('connection', (socket) => {
-    console.log(`Jugador conectado: ${socket.id}`)
+    console.log('Jugador conectado:', socket.id);
 
     socket.on('setUsername', (username) => {
-        socket.username = username
+        socket.username = username;
 
         if (waitingPlayer) {
-            const room = `room-${waitingPlayer.id}-${socket.id}`
-            socket.join(room)
-            waitingPlayer.join(room)
+            const room = `${waitingPlayer.id}#${socket.id}`;
+            socket.join(room);
+            waitingPlayer.join(room);
+
+            rooms[room] = {
+                players: [waitingPlayer.id, socket.id],
+                rematchVotes: new Set()
+            };
 
             io.to(room).emit('startGame', {
                 room,
                 players: [waitingPlayer.username, socket.username],
                 firstTurn: waitingPlayer.id
-            })
+            });
 
-            waitingPlayer = null
+            waitingPlayer = null;
         } else {
-            waitingPlayer = socket
-            socket.emit('waitingForPlayer')
+            waitingPlayer = socket;
+            socket.emit('waitingForPlayer');
         }
-    })
-
-    socket.on('disconnect', () => {
-        console.log(`Jugador desconectado: ${socket.id}`)
-        if (waitingPlayer && waitingPlayer.id === socket.id) {
-            waitingPlayer = null
-        }
-        // se podría inidcar que el jugar ha dejado la sala
-    })
+    });
 
     socket.on('playMove', ({ index }) => {
-        const rooms = Array.from(socket.rooms).filter((r) => r !== socket.id);
-        if (rooms.length === 0) return;
-
-        const room = rooms[0];
-        socket.to(room).emit('opponentMove', { index });
+        const room = Array.from(socket.rooms).find((r) => r !== socket.id);
+        if (room) {
+            socket.to(room).emit('opponentMove', { index });
+        }
     });
 
     socket.on('gameOver', ({ result }) => {
-        const rooms = Array.from(socket.rooms).filter((r) => r !== socket.id);
-        if (rooms.length === 0) return;
-
-        const room = rooms[0];
-        socket.to(room).emit('gameEnded', { result });
+        const room = Array.from(socket.rooms).find((r) => r !== socket.id);
+        if (room) {
+            socket.to(room).emit('gameEnded', { result });
+        }
     });
 
-})
+    socket.on('requestRematch', async () => {
+        const room = Array.from(socket.rooms).find((r) => r !== socket.id);
+        if (!room || !rooms[room]) return;
 
-const PORT = process.env.PORT || 3000
-server.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`))
+        rooms[room].rematchVotes.add(socket.id);
+
+        if (rooms[room].rematchVotes.size === 2) {
+            rooms[room].rematchVotes.clear();
+
+            const socketsInRoom = await io.in(room).fetchSockets();
+            const first = socketsInRoom[Math.floor(Math.random() * 2)];
+
+            io.to(room).emit('startRematch', {
+                firstTurn: first.id
+            });
+        }
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Servidor escuchando en http://localhost:3000');
+});

@@ -1,64 +1,52 @@
 const socket = io();
 
-const form = document.getElementById('usernameForm');
-const input = document.getElementById('usernameInput');
+const aliasInput = document.getElementById('aliasInput');
+const startBtn = document.getElementById('startBtn');
+const gameArea = document.getElementById('game');
 const statusDiv = document.getElementById('status');
-const gameArea = document.getElementById('gameArea');
-const formContainer = document.getElementById('formContainer');
+const board = document.getElementById('board');
+const cells = document.querySelectorAll('.cell');
+const restartBtn = document.getElementById('restartBtn');
 
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const username = input.value.trim();
-    if (!username) return;
+let mySymbol = '';
+let opponentSymbol = '';
+let myTurn = false;
+let socketId;
+let rematchRequested = false;
 
-    socket.emit('setUsername', username);
-    localStorage.setItem('alias', username);
+socket.on('connect', () => {
+    socketId = socket.id;
+});
 
-    formContainer.classList.add('hidden');
-    statusDiv.classList.remove('hidden');
-    statusDiv.textContent = 'Esperando a otro jugador...';
+startBtn.addEventListener('click', () => {
+    const alias = aliasInput.value.trim();
+    if (!alias) return;
+
+    localStorage.setItem('alias', alias);
+    socket.emit('setUsername', alias);
+    document.getElementById('login').classList.add('hidden');
+    gameArea.classList.remove('hidden');
 });
 
 socket.on('waitingForPlayer', () => {
     statusDiv.textContent = 'Esperando a otro jugador...';
+    loader.classList.remove('hidden');
 });
 
 socket.on('startGame', ({ players, firstTurn }) => {
+    loader.classList.add('hidden');
     const alias = localStorage.getItem('alias');
-    const opponent = players.find((p) => p !== alias);
-
+    const opponent = players.find(p => p !== alias);
     statusDiv.textContent = `¡Conectado contra ${opponent}!`;
 
-    gameArea.classList.remove('hidden');
-    // Aquí luego inicializaremos el tablero de juego
-});
-
-let currentTurn;
-let myTurn = false;
-let mySymbol = 'X';
-let opponentSymbol = 'O';
-
-const cells = document.querySelectorAll('.cell');
-
-// Inicializa el juego
-socket.on('startGame', ({ players, firstTurn }) => {
-    const alias = localStorage.getItem('alias');
-    const opponent = players.find((p) => p !== alias);
-
-    statusDiv.textContent = `¡Conectado contra ${opponent}!`;
-
-    gameArea.classList.remove('hidden');
-
-    // Determina símbolo
-    myTurn = socket.id === firstTurn;
+    myTurn = socketId === firstTurn;
     mySymbol = myTurn ? 'X' : 'O';
     opponentSymbol = myTurn ? 'O' : 'X';
 
     updateTurnStatus();
 });
 
-// Clic en celda
-cells.forEach((cell) => {
+cells.forEach(cell => {
     cell.addEventListener('click', () => {
         if (!myTurn || cell.textContent !== '') return;
 
@@ -71,58 +59,46 @@ cells.forEach((cell) => {
 
         const result = checkGameOver();
         if (result) handleGameOver(result);
-
         updateTurnStatus();
     });
 });
 
-// Recibir movimiento del oponente
 socket.on('opponentMove', ({ index }) => {
-    const cell = document.querySelector(`.cell[data-index="${index}"]`);
-    if (cell && cell.textContent === '') {
-        cell.textContent = opponentSymbol;
-        cell.classList.add('disabled');
-    }
-
+    const cell = cells[index];
+    cell.textContent = opponentSymbol;
+    cell.classList.add('disabled');
     myTurn = true;
 
     const result = checkGameOver();
     if (result) handleGameOver(result);
-
     updateTurnStatus();
 });
 
-// Actualiza estado de turno
 function updateTurnStatus() {
-    statusDiv.textContent = myTurn ? 'Tu turno' : 'Turno del oponente';
+    if (myTurn) {
+        statusDiv.textContent = 'Tu turno';
+    } else {
+        statusDiv.textContent = 'Turno del oponente';
+    }
 }
 
 const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // filas
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columnas
-    [0, 4, 8], [2, 4, 6]             // diagonales
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
 ];
 
 function checkGameOver() {
-    const cellValues = Array.from(cells).map(cell => cell.textContent);
+    const values = Array.from(cells).map(c => c.textContent);
 
-    // Verificar victoria
-    for (const combo of winningCombinations) {
-        const [a, b, c] = combo;
-        if (
-            cellValues[a] &&
-            cellValues[a] === cellValues[b] &&
-            cellValues[a] === cellValues[c]
-        ) {
-            return cellValues[a]; // 'X' o 'O'
+    for (const [a, b, c] of winningCombinations) {
+        if (values[a] && values[a] === values[b] && values[a] === values[c]) {
+            return values[a];
         }
     }
 
-    // Verificar empate
-    const isDraw = cellValues.every(value => value !== '');
-    if (isDraw) return 'draw';
-
-    return null; // El juego continúa
+    if (values.every(v => v !== '')) return 'draw';
+    return null;
 }
 
 function handleGameOver(result) {
@@ -137,8 +113,7 @@ function handleGameOver(result) {
     }
 
     cells.forEach(cell => cell.classList.add('disabled'));
-
-    // Notifica al servidor el final del juego
+    restartBtn.classList.remove('hidden');
     socket.emit('gameOver', { result });
 }
 
@@ -148,11 +123,34 @@ socket.on('gameEnded', ({ result }) => {
     if (result === 'draw') {
         statusDiv.textContent = 'Empate 🤝';
     } else if (result === opponentSymbol) {
-        statusDiv.textContent = 'Has perdido 😢!';
+        statusDiv.textContent = 'Has perdido 😢';
     } else {
-        statusDiv.textContent = '¡Has ganado! 🎉!';
+        statusDiv.textContent = '¡Has ganado! 🎉';
     }
 
     cells.forEach(cell => cell.classList.add('disabled'));
+    restartBtn.classList.remove('hidden');
 });
 
+restartBtn.addEventListener('click', () => {
+    restartBtn.disabled = true;
+    restartBtn.textContent = 'Esperando al oponente...';
+    socket.emit('requestRematch');
+});
+
+socket.on('startRematch', ({ firstTurn }) => {
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('disabled');
+    });
+
+    restartBtn.classList.add('hidden');
+    restartBtn.disabled = false;
+    restartBtn.textContent = 'Volver a jugar 🔁';
+
+    myTurn = socketId === firstTurn;
+    mySymbol = myTurn ? 'X' : 'O';
+    opponentSymbol = myTurn ? 'O' : 'X';
+
+    updateTurnStatus();
+});
