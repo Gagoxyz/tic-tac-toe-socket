@@ -11,6 +11,7 @@ const playerInfo = document.getElementById('playerInfo');
 const yourNameSpan = document.getElementById('yourName');
 const opponentNameSpan = document.getElementById('opponentName');
 const yourWinsSpan = document.getElementById('yourWins');
+const gameInfo = document.querySelector('.gameInfo');
 
 let mySymbol = '';
 let opponentSymbol = '';
@@ -33,6 +34,8 @@ startBtn.addEventListener('click', () => {
     socket.emit('setUsername', alias);
     document.getElementById('login').classList.add('hidden');
     gameArea.classList.remove('hidden');
+
+    if (gameInfo) gameInfo.style.display = 'none';
 });
 
 socket.on('waitingForPlayer', () => {
@@ -122,23 +125,26 @@ function checkGameOver() {
 function handleGameOver(result) {
     myTurn = false;
 
+    let winnerId = null;
+    if (result !== 'draw') {
+        winnerId = (result === mySymbol) ? socketId : null;
+    }
+
     if (result === 'draw') {
         statusDiv.textContent = 'Empate 🤝';
     } else if (result === mySymbol) {
         statusDiv.textContent = '¡Has ganado! 🎉';
-        wins++;
-        localStorage.setItem(`${username}_wins`, wins);
-        yourWinsSpan.textContent = wins;
     } else {
         statusDiv.textContent = 'Has perdido 😢';
     }
 
     cells.forEach(cell => cell.classList.add('disabled'));
     restartBtn.classList.remove('hidden');
-    socket.emit('gameOver', { result });
+
+    socket.emit('gameOver', { result, winnerId });
 }
 
-socket.on('gameEnded', ({ result }) => {
+socket.on('gameEnded', ({ result, victories: allVictories }) => {
     myTurn = false;
 
     if (result === 'draw') {
@@ -147,6 +153,18 @@ socket.on('gameEnded', ({ result }) => {
         statusDiv.textContent = 'Has perdido 😢';
     } else {
         statusDiv.textContent = '¡Has ganado! 🎉';
+    }
+
+    const newWins = allVictories?.[username];
+    if (newWins != null) {
+        wins = newWins;
+        localStorage.setItem(`${username}_wins`, wins);
+        yourWinsSpan.textContent = wins;
+    }
+
+    const opponentWinsEl = document.getElementById('opponentWins');
+    if (opponentWinsEl && allVictories?.[opponent] != null) {
+        opponentWinsEl.textContent = allVictories[opponent];
     }
 
     cells.forEach(cell => cell.classList.add('disabled'));

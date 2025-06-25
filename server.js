@@ -11,6 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let waitingPlayer = null;
 const rooms = {};
+const victories = {};
 
 io.on('connection', (socket) => {
     console.log('Jugador conectado:', socket.id);
@@ -54,11 +55,24 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('gameOver', ({ result }) => {
-        const room = Array.from(socket.rooms).find((r) => r !== socket.id);
-        if (room) {
-            socket.to(room).emit('gameEnded', { result });
+    socket.on('gameOver', ({ result, winnerId }) => {
+        const room = Array.from(socket.rooms).find(r => r !== socket.id);
+        if (!room) return;
+
+        let winnerUsername = null;
+
+        if (winnerId) {
+            const winnerSocket = io.sockets.sockets.get(winnerId);
+            if (winnerSocket?.username) {
+                winnerUsername = winnerSocket.username;
+                victories[winnerUsername] = (victories[winnerUsername] || 0) + 1;
+            }
         }
+
+        io.to(room).emit('gameEnded', {
+            result,
+            victories
+        });
     });
 
     socket.on('requestRematch', async () => {

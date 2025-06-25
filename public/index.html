@@ -10,6 +10,12 @@
 </head>
 
 <body>
+    <h1>TIC-TAC-TOE</h1>
+    <div class="gameInfo">
+        <P>Versión del clásico juego 3 en raya en modo online. <br>
+        Se requieren 2 jugadores para poder iniciar la partida.</p>
+        <h4>¡Invita a un amig@!</h4>
+    </div>
     <div id="login">
         <input type="text" id="aliasInput" placeholder="Tu alias" />
         <button id="startBtn">Empezar</button>
@@ -17,9 +23,12 @@
 
     <div id="game" class="hidden">
         <div id="playerInfo" class="hidden">
-            <p><strong>Tú:</strong> <span id="yourName">-</span> | <strong>Victorias:</strong> <span
-                    id="yourWins">0</span></p>
-            <p><strong>Oponente:</strong> <span id="opponentName">-</span></p>
+            <p><strong>Tú:</strong> <span id="yourName">-</span> |
+                <strong>Victorias:</strong> <span id="yourWins">0</span>
+            </p>
+            <p><strong>Oponente:</strong> <span id="opponentName">-</span> |
+                <strong>Victorias:</strong> <span id="opponentWins">0</span>
+            </p>
         </div>
         <h2 id="status"></h2>
         <div id="statusWrapper">
