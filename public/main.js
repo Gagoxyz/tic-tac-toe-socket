@@ -24,6 +24,7 @@ let wins = 0;
 
 socket.on('connect', () => {
     socketId = socket.id;
+    localStorage.clear();
 });
 
 startBtn.addEventListener('click', () => {
