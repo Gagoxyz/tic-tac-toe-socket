@@ -7,12 +7,19 @@ const statusDiv = document.getElementById('status');
 const board = document.getElementById('board');
 const cells = document.querySelectorAll('.cell');
 const restartBtn = document.getElementById('restartBtn');
+const playerInfo = document.getElementById('playerInfo');
+const yourNameSpan = document.getElementById('yourName');
+const opponentNameSpan = document.getElementById('opponentName');
+const yourWinsSpan = document.getElementById('yourWins');
 
 let mySymbol = '';
 let opponentSymbol = '';
 let myTurn = false;
 let socketId;
 let rematchRequested = false;
+let username = '';
+let opponent = '';
+let wins = 0;
 
 socket.on('connect', () => {
     socketId = socket.id;
@@ -33,11 +40,22 @@ socket.on('waitingForPlayer', () => {
     loader.classList.remove('hidden');
 });
 
-socket.on('startGame', ({ players, firstTurn }) => {
+socket.on('startGame', ({ yourAlias, opponentAlias, firstTurn }) => {
     loader.classList.add('hidden');
-    const alias = localStorage.getItem('alias');
-    const opponent = players.find(p => p !== alias);
+
+    username = yourAlias;
+    opponent = opponentAlias;
+
     statusDiv.textContent = `¡Conectado contra ${opponent}!`;
+
+    yourNameSpan.textContent = username;
+    opponentNameSpan.textContent = opponent;
+
+    const savedWins = localStorage.getItem(`${username}_wins`);
+    wins = savedWins ? parseInt(savedWins) : 0;
+    yourWinsSpan.textContent = wins;
+
+    playerInfo.classList.remove('hidden');
 
     myTurn = socketId === firstTurn;
     mySymbol = myTurn ? 'X' : 'O';
@@ -108,6 +126,9 @@ function handleGameOver(result) {
         statusDiv.textContent = 'Empate 🤝';
     } else if (result === mySymbol) {
         statusDiv.textContent = '¡Has ganado! 🎉';
+        wins++;
+        localStorage.setItem(`${username}_wins`, wins);
+        yourWinsSpan.textContent = wins;
     } else {
         statusDiv.textContent = 'Has perdido 😢';
     }

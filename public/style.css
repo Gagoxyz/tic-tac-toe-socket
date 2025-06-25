@@ -131,3 +131,9 @@ background: linear-gradient(135deg, #0d1117, #1b2838, #2e3d55);
         transform: rotate(360deg);
     }
 }
+
+#playerInfo {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+}

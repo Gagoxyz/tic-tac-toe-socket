@@ -28,9 +28,15 @@ io.on('connection', (socket) => {
                 rematchVotes: new Set()
             };
 
-            io.to(room).emit('startGame', {
-                room,
-                players: [waitingPlayer.username, socket.username],
+            io.to(waitingPlayer.id).emit('startGame', {
+                yourAlias: waitingPlayer.username,
+                opponentAlias: socket.username,
+                firstTurn: waitingPlayer.id
+            });
+
+            io.to(socket.id).emit('startGame', {
+                yourAlias: socket.username,
+                opponentAlias: waitingPlayer.username,
                 firstTurn: waitingPlayer.id
             });
 
