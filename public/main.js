@@ -50,11 +50,14 @@ socket.on('waitingForPlayer', () => {
     loader.classList.remove('hidden');
 });
 
-socket.on('startGame', ({ yourAlias, opponentAlias, firstTurn }) => {
+let aliasColors = {};
+
+socket.on('startGame', ({ yourAlias, opponentAlias, firstTurn, playerColors }) => {
     loader.classList.add('hidden');
 
     username = yourAlias;
     opponent = opponentAlias;
+    aliasColors = playerColors;
 
     statusDiv.textContent = `¡Conectado contra ${opponent}!`;
 
@@ -221,7 +224,6 @@ sendChatBtn.addEventListener('click', () => {
     const message = chatInput.value.trim();
     if (message) {
         socket.emit('chatMessage', { message });
-        appendMessage(`${username}: ${message}`);
         chatInput.value = '';
     }
 });
@@ -233,12 +235,24 @@ chatInput.addEventListener('keydown', (e) => {
 });
 
 socket.on('chatMessage', ({ from, message }) => {
-    appendMessage(`${from}: ${message}`);
+    appendMessage(from, message);
 });
 
-function appendMessage(msg) {
+function appendMessage(from, message) {
     const p = document.createElement('p');
-    p.textContent = msg;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = `${from}: `;
+    nameSpan.style.color = aliasColors[from] || 'white';
+    nameSpan.style.fontWeight = 'bold';
+
+    const msgSpan = document.createElement('span');
+    msgSpan.textContent = message;
+    msgSpan.style.color = 'white';
+
+    p.appendChild(nameSpan);
+    p.appendChild(msgSpan);
+
     chatMessages.appendChild(p);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }

@@ -29,16 +29,23 @@ io.on('connection', (socket) => {
                 rematchVotes: new Set()
             };
 
+            const playerColors = {
+                [waitingPlayer.username]: '#CCFF00',
+                [socket.username]: '#4FC3F7'
+            };
+
             io.to(waitingPlayer.id).emit('startGame', {
                 yourAlias: waitingPlayer.username,
                 opponentAlias: socket.username,
-                firstTurn: waitingPlayer.id
+                firstTurn: waitingPlayer.id,
+                playerColors
             });
 
             io.to(socket.id).emit('startGame', {
                 yourAlias: socket.username,
                 opponentAlias: waitingPlayer.username,
-                firstTurn: waitingPlayer.id
+                firstTurn: waitingPlayer.id,
+                playerColors
             });
 
             waitingPlayer = null;
@@ -98,7 +105,11 @@ io.on('connection', (socket) => {
         if (!room) return;
 
         const from = socket.username || 'Anónimo';
-        socket.to(room).emit('chatMessage', { from, message });
+        io.to(room).emit('chatMessage', {
+            from,
+            message,
+            senderId: socket.id
+        });
     });
 });
 
