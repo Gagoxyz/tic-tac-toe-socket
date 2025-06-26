@@ -7,13 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
     <h1>TIC-TAC-TOE</h1>
+
+    <div id="chatBox" class="hidden">
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-controls">
+            <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." />
+            <button id="sendChatBtn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
     <div class="gameInfo">
         <P>Versión del clásico juego 3 en raya en modo online. <br>
-        Se requieren 2 jugadores para poder iniciar la partida.</p>
+            Se requieren 2 jugadores para poder iniciar la partida.</p>
         <h4>¡Invita a un amig@!</h4>
     </div>
     <div id="login">
@@ -22,6 +33,7 @@
     </div>
 
     <div id="game" class="hidden">
+        <button id="toggleChatBtn" class="hidden">Chat  💬</button>
         <div id="playerInfo" class="hidden">
             <p><strong>Tú:</strong> <span id="yourName">-</span> |
                 <strong>Victorias:</strong> <span id="yourWins">0</span>

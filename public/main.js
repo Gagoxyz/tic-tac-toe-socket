@@ -39,6 +39,12 @@ startBtn.addEventListener('click', () => {
     if (gameInfo) gameInfo.style.display = 'none';
 });
 
+aliasInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        startBtn.click();
+    }
+});
+
 socket.on('waitingForPlayer', () => {
     statusDiv.textContent = 'Esperando a otro jugador...';
     loader.classList.remove('hidden');
@@ -194,3 +200,45 @@ socket.on('startRematch', ({ firstTurn }) => {
 
     updateTurnStatus();
 });
+
+const toggleChatBtn = document.getElementById('toggleChatBtn');
+const chatBox = document.getElementById('chatBox');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendChatBtn = document.getElementById('sendChatBtn');
+
+// Mostrar el botón una vez inicia la partida
+socket.on('startGame', () => {
+    toggleChatBtn.classList.remove('hidden');
+});
+
+toggleChatBtn.addEventListener('click', () => {
+    chatBox.classList.toggle('hidden');
+});
+
+// Enviar mensaje
+sendChatBtn.addEventListener('click', () => {
+    const message = chatInput.value.trim();
+    if (message) {
+        socket.emit('chatMessage', { message });
+        appendMessage(`${username}: ${message}`);
+        chatInput.value = '';
+    }
+});
+
+chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        sendChatBtn.click();
+    }
+});
+
+socket.on('chatMessage', ({ from, message }) => {
+    appendMessage(`${from}: ${message}`);
+});
+
+function appendMessage(msg) {
+    const p = document.createElement('p');
+    p.textContent = msg;
+    chatMessages.appendChild(p);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}

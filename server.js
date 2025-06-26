@@ -92,6 +92,14 @@ io.on('connection', (socket) => {
             });
         }
     });
+
+    socket.on('chatMessage', ({ message }) => {
+        const room = Array.from(socket.rooms).find(r => r !== socket.id);
+        if (!room) return;
+
+        const from = socket.username || 'Anónimo';
+        socket.to(room).emit('chatMessage', { from, message });
+    });
 });
 
 server.listen(3000, () => {
