@@ -116,8 +116,14 @@ io.on('connection', (socket) => {
     });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+const indexPath = path.join(__dirname, 'public', 'index.html');
+
+app.get('*', function (req, res, next) {
+    if (req.accepts('html')) {
+        res.sendFile(indexPath);
+    } else {
+        next();
+    }
 });
 
 server.listen(port, () => {
