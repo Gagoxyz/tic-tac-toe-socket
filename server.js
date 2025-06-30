@@ -116,16 +116,6 @@ io.on('connection', (socket) => {
     });
 });
 
-const indexPath = path.join(__dirname, 'public', 'index.html');
-
-app.get('*', function (req, res, next) {
-    if (req.accepts('html')) {
-        res.sendFile(indexPath);
-    } else {
-        next();
-    }
-});
-
 server.listen(port, () => {
-    console.log(`Servidor escuchando en http://localhost:${port}`);
+    console.log(`Servidor escuchando en puerto:${port}`);
 });
