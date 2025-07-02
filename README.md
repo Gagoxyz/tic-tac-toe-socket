@@ -71,10 +71,10 @@ El servidor se iniciará por defecto en \`http://localhost:3000\`. Abre esa dire
 ## ✨ Capturas
 
 ### 🎲 Tablero en tiempo real
-<img src="./public/images/miniaturas/tica-tac-toe-tablero.png" alt="Juego en ejecución" width="500"/>
+<img src="./public/images/miniaturas/tic-tac-toe-tablero.png" alt="Juego en ejecución" width="500"/>
 
 ### 💬 Chat multijugador
-<img src="./public/images/miniaturas/tica-tac-toe-chat.png" alt="Chat integrado" width="500"/>
+<img src="./public/images/miniaturas/tic-tac-toe-chat.png" alt="Chat integrado" width="500"/>
 
 ---
 
