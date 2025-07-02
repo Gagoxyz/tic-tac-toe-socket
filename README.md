@@ -44,7 +44,7 @@ La partida no comienza hasta que dos jugadores están conectados. Se incluye tod
 git clone https://github.com/gagoxyz/tic-tac-toe-socket.git
 
 # Entra en el directorio del proyecto
-cd tic-tac-toe-realtime
+cd tic-tac-toe-socket
 
 # Instala las dependencias
 npm install
