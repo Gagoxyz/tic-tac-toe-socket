@@ -2,7 +2,7 @@
 
 > Clásico juego de 3 en raya en modo multijugador con chat integrado y sincronización en tiempo real.
 
-<img src="./public/images/miniaturas/tica-tac-toe-main.png" alt="Vista general del juego" width="600"/>
+<img src="./public/images/miniaturas/tic-tac-toe-main.png" alt="Vista general del juego" width="600"/>
 
 ## 📝 Descripción
 
@@ -10,7 +10,7 @@
 
 La partida no comienza hasta que dos jugadores están conectados. Se incluye toda la lógica necesaria para gestionar los turnos, el estado del juego, detectar ganadores o empates, y sincronizar el tablero en ambos extremos. Además, incorpora un chat en vivo que funciona durante toda la sesión de juego.
 
-<img src="./public/images/miniaturas/tica-tac-toe-chat.png" alt="Vista del chat en tiempo real" width="600"/>
+<img src="./public/images/miniaturas/tic-tac-toe-chat.png" alt="Vista del chat en tiempo real" width="600"/>
 
 ---
 
