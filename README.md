@@ -40,8 +40,9 @@ La partida no comienza hasta que dos jugadores están conectados. Se incluye tod
 
 ## 📦 Instalación
 
+\`\`\`bash
 # Clona el repositorio
-git clone https://github.com/gagoxyz/tic-tac-toe-socket.git
+git clone https://github.com/Gagoxyz/tic-tac-toe-socket.git
 
 # Entra en el directorio del proyecto
 cd tic-tac-toe-socket
@@ -51,6 +52,7 @@ npm install
 
 # Inicia el servidor
 npm start
+\`\`\`
 
 El servidor se iniciará por defecto en \`http://localhost:3000\`. Abre esa dirección en dos pestañas o en dos navegadores diferentes para comenzar una partida.
 
@@ -78,10 +80,10 @@ El servidor se iniciará por defecto en \`http://localhost:3000\`. Abre esa dire
 
 ## 🤝 Contribuciones
 
-Las contribuciones son bienvenidas. Si deseas mejorar la funcionalidad, reportar errores o sugerir nuevas características, no dudes en abrir un [issue](https://github.com/gagoxyz/tic-tac-toe-socket/issues) o enviar un pull request.
+Las contribuciones son bienvenidas. Si deseas mejorar la funcionalidad, reportar errores o sugerir nuevas características, no dudes en abrir un [issue](https://github.com/Gagoxyz/tic-tac-toe-socket/issues) o enviar un pull request.
 
 ---
 
 ## 🧠 Autor
 
-Desarrollado por **Gagoxyz** – ¡gracias por jugar!
+Desarrollado por **[Gagoxyz](https://github.com/Gagoxyz)** – ¡gracias por jugar!
