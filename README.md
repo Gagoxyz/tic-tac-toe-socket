@@ -40,7 +40,6 @@ La partida no comienza hasta que dos jugadores están conectados. Se incluye tod
 
 ## 📦 Instalación
 
-\`\`\`bash
 # Clona el repositorio
 git clone https://github.com/gagoxyz/tic-tac-toe-socket.git
 
