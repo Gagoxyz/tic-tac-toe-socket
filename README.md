@@ -51,7 +51,6 @@ npm install
 
 # Inicia el servidor
 npm start
-\`\`\`
 
 El servidor se iniciará por defecto en \`http://localhost:3000\`. Abre esa dirección en dos pestañas o en dos navegadores diferentes para comenzar una partida.
 
