@@ -40,7 +40,7 @@ La partida no comienza hasta que dos jugadores están conectados. Se incluye tod
 
 ## 📦 Instalación
 
-\`\`\`bash
+```bash
 # Clona el repositorio
 git clone https://github.com/Gagoxyz/tic-tac-toe-socket.git
 
@@ -52,9 +52,9 @@ npm install
 
 # Inicia el servidor
 npm start
-\`\`\`
+```
 
-El servidor se iniciará por defecto en \`http://localhost:3000\`. Abre esa dirección en dos pestañas o en dos navegadores diferentes para comenzar una partida.
+El servidor se iniciará por defecto en `http://localhost:3000`. Abre esa dirección en dos pestañas o en dos navegadores diferentes para comenzar una partida.
 
 ---
 
