@@ -86,4 +86,4 @@ Las contribuciones son bienvenidas. Si deseas mejorar la funcionalidad, reportar
 
 ## 🧠 Autor
 
-Desarrollado por **[Gagoxyz]** – ¡gracias por jugar!
+Desarrollado por **Gagoxyz** – ¡gracias por jugar!
